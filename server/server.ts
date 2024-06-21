@@ -110,7 +110,15 @@ app.post('/api/newGame', async (req, res, next) => {
     `;
     const params1 = [newGame.gamePin, hostName];
     await db.query(players, params1);
-    res.status(201).json(newGame);
+    const sql2 = `
+    Select * from "games"
+    JOIN "categories" using ("categoryId")
+    JOIN "items" using ("itemId")
+    WHERE "games"."gamePin" = $1
+    `;
+    const params2 = [newGame.gamePin];
+    const result2 = await db.query(sql2, params2);
+    res.status(201).json(result2.rows[0]);
   } catch (err) {
     next(err);
   }
@@ -134,7 +142,15 @@ app.post('/api/joinGame', async (req, res, next) => {
     const result = await db.query(sql, params);
     const newPlayer = result.rows[0];
     console.log('New player added:', newPlayer);
-    res.status(201).json(newPlayer);
+    const sql2 = `
+    Select * from "games"
+    JOIN "categories" using ("categoryId")
+    JOIN "items" using ("itemId")
+    WHERE "games"."gamePin" = $1
+    `;
+    const params2 = [gamePin];
+    const result2 = await db.query(sql2, params2);
+    res.status(201).json(result2.rows[0]);
   } catch (err) {
     console.error('Error adding player:', err);
     next(err);

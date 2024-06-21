@@ -3,22 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePlayer } from './usePlayer';
 import { useEffect, useState } from 'react';
-
-export interface Player {
-  gamePlayersId: number;
-  gamePin: string;
-  playerName: string;
-  isImposter: boolean;
-  isAlive: boolean;
-}
-
-export interface Game {
-  gamePin: string;
-  categoryId: number;
-  hostName: string;
-  itemId: number;
-  gameState: string;
-}
+import { Player } from './playerContext';
 
 export default function WaitingRoom() {
   const navigate = useNavigate();
@@ -51,7 +36,9 @@ export default function WaitingRoom() {
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-4">Waiting Room</h2>
+      <h2 className="mb-4">Lobby</h2>
+      <h3>Game Pin: {game.gamePin}</h3>
+      <h3>Category: {game.categoryName}</h3>
       <ul className="list-group">
         {players.map((player, index) => (
           <li key={index} className="list-group-item">

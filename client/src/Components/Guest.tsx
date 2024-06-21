@@ -6,7 +6,7 @@ export default function Guest() {
   const [guestUsername, setGuestUsername] = useState('');
   const [gamePin, setGamePin] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const { setPlayer } = usePlayer();
+  const { setGame, setPlayer } = usePlayer();
 
   const navigate = useNavigate();
 
@@ -50,6 +50,7 @@ export default function Guest() {
       };
 
       setPlayer(guest);
+      setGame(gameInfo);
       navigate(`/lobby/${gameInfo.gamePin}`);
     } catch (error) {
       console.error('Error joining game:', error);

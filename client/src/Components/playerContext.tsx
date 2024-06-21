@@ -7,19 +7,22 @@ export type Player = {
   isAlive: boolean;
   isHost: boolean;
 };
-export type Game = {
+export interface Game {
   gamePin: string;
   categoryId: number;
+  categoryName: string;
   hostName: string;
   itemId: number;
+  itemName: string;
   gameState: string;
-};
+}
+
 type Props = {
   children: ReactNode;
 };
 export type PlayerContextType = {
   game: Game;
-  setGame: React.Dispatch<React.SetStateAction<Game>>; // this updates the game state. function that just takes the game.
+  setGame: React.Dispatch<React.SetStateAction<Game>>;
   player: Player | undefined;
   setPlayer: React.Dispatch<React.SetStateAction<Player | undefined>>;
 };
@@ -31,8 +34,10 @@ export function PlayerProvider({ children }: Props) {
   const [game, setGame] = useState<Game>({
     gamePin: '',
     categoryId: 0,
+    categoryName: '',
     hostName: '',
     itemId: 0,
+    itemName: '',
     gameState: '',
   });
   return (
