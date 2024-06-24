@@ -36,6 +36,56 @@ app.get('/api/games', async (req, res, next) => {
   }
 });
 
+app.get('/api/getItemName', async (req, res, next) => {
+  const { gamePin, playerName } = req.query;
+
+  if (!gamePin || !playerName) {
+    return res
+      .status(400)
+      .json({ error: 'GamePin and player name is required' });
+  }
+  try {
+    const sql = `
+    SELECT i."itemName"
+    FROM "items" i
+    JOIN "games" g USING ("itemId")
+    JOIN "gamePlayers" gp USING ("gamePin")
+    WHERE g."gamePin" = $1 AND gp."playerName" = $2 AND gp."isImposter" = false
+    `;
+    const values = [gamePin, playerName];
+
+    const result = await db.query(sql, values);
+
+    if (result.rows.length > 0) {
+      res.json({ itemName: result.rows[0].itemName });
+    } else {
+      res
+        .status(404)
+        .json({ error: 'Item not found or player is an imposter' });
+    }
+  } catch (error) {
+    console.error('Error fetching item name:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/api/submitHint', async (req, res, next) => {
+  const { hint } = req.body;
+  try {
+    const sql = `
+      INSERT INTO "hints" ("hint")
+      VALUES ($1)
+      RETURNING *;
+    `;
+    const params = [hint];
+    const result = await db.query(sql, params);
+    const aHint = result.rows[0];
+  } catch (error) {
+    console.error('Cannot submit hint', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/api/gamePlayers', async (req, res, next) => {
   try {
     const sql = `
@@ -173,6 +223,22 @@ app.get('/api/players', async (req, res, next) => {
   }
 });
 
+app.get('/api/players/:playerName', async (req, res, next) => {
+  const { playerName } = req.params;
+  try {
+    const sql = `
+      SELECT *
+      FROM "gamePlayers"
+      WHERE "playerName" = $1;
+    `;
+    const result = await db.query(sql, [playerName]);
+    const players = result.rows[0];
+    res.json(players);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.get('/api/categories/:categoryId/items', async (req, res, next) => {
   const { categoryId } = req.params;
   try {
@@ -209,16 +275,24 @@ app.post('/api/startGame', async (req, res, next) => {
     const result = await db.query(sql, [gamePin]);
     const game = result.rows[0];
     const sql2 = `
-    select * from "gamePlayers" where "gamePin" = $1;
+    select * from "gamePlayers" where "gamePin" = $1 ORDER BY RANDOM()
+    LIMIT 1;
     `;
     const result2 = await db.query(sql2, [gamePin]);
-    const players = result2.rows;
-    game.players = players;
+    const player = result2.rows[0];
     const sql3 = `
-    update "isImposter" set "isImposter" = true where "gamePin" = $1;
+    update "gamePlayers" set "isImposter" = true where "gamePlayersId" = $1
     `;
-    await db.query(sql3, [gamePin]);
-    res.json(game);
+    await db.query(sql3, [player.gamePlayersId]);
+    const sql4 = `
+    Select * from "games"
+    JOIN "categories" using ("categoryId")
+    JOIN "items" using ("itemId")
+    WHERE "games"."gamePin" = $1
+    `;
+    const params4 = [gamePin];
+    const result4 = await db.query(sql4, params4);
+    res.json(result4.rows[0]);
   } catch (err) {
     next(err);
   }

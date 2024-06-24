@@ -2,8 +2,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Home from './Components/Home';
 import WaitingRoom from './Components/WaitingRoom';
-import StartingRoom from './Components/StartingRoom.tsx';
 import { PlayerProvider } from './Components/playerContext.tsx';
+import GameRoom from './Components/GameRoom.tsx';
 
 export default function App() {
   return (
@@ -12,7 +12,7 @@ export default function App() {
         <Routes>
           <Route index element={<Home />} />
           <Route path="/lobby/:gamePin" element={<WaitingRoom />} />
-          <Route path="/startingRoom" element={<StartingRoom />} />
+          <Route path="/gameRoom/:gamePin" element={<GameRoom />} />
         </Routes>
       </BrowserRouter>
     </PlayerProvider>

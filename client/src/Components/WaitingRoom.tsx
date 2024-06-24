@@ -1,4 +1,3 @@
-// Components/WaitingRoom.tsx
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePlayer } from './usePlayer';
@@ -7,7 +6,7 @@ import { Player } from './playerContext';
 
 export default function WaitingRoom() {
   const navigate = useNavigate();
-  const { game, player } = usePlayer();
+  const { game, player, setGame } = usePlayer();
   const [players, setPlayers] = useState<Player[]>([]);
   const { gamePin } = useParams();
   useEffect(() => {
@@ -24,14 +23,28 @@ export default function WaitingRoom() {
         console.error('Error fetching players:', error);
       }
     };
-
     fetchPlayers();
   }, [gamePin]);
 
-  const startGame = () => {
-    if (game) {
-      navigate('/startingRoom', { state: { players, game } });
+  const startGame = async () => {
+    try {
+      const gameResponse = await fetch(`/api/startGame`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ gamePin }),
+      });
+      if (gameResponse.ok) {
+        const gameData = await gameResponse.json();
+        setGame(gameData);
+      } else {
+        throw new Error('Error cannot start game');
+      }
+    } catch (error) {
+      console.error('Error cannot start game:', error);
     }
+    navigate(`/gameRoom/${gamePin}`);
   };
 
   return (
@@ -46,11 +59,16 @@ export default function WaitingRoom() {
           </li>
         ))}
       </ul>
-      {player?.isHost && (
+      {player?.isHost ? (
         <button className="btn btn-primary mt-4" onClick={startGame}>
           Start Game
+        </button>
+      ) : (
+        <button className="btn btn-primary mt-4" onClick={startGame}>
+          Enter Game
         </button>
       )}
     </div>
   );
 }
+// work on onclick start game to enter game for guest and do error handling so they can join if host joined...
