@@ -7,9 +7,10 @@ export default function GameRoom() {
   const { game, player, setPlayer } = usePlayer();
   const [hint, setHint] = useState<string>('');
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const getItems = async () => {
+    const getPlayers = async () => {
       try {
         const response = await fetch(`/api/players/${player?.playerName}`);
         if (response.ok) {
@@ -20,17 +21,15 @@ export default function GameRoom() {
         }
       } catch (error) {
         console.error('Error fetching player:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    getItems();
+    getPlayers();
   }, [player?.playerName]);
 
   const handleHintChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setHint(event.target.value);
-  };
-
-  const handleImposterButton = () => {
-    navigate(`/voteRoom/${gamePin}`);
   };
 
   const handleSubmitHint = async (event: React.FormEvent) => {
@@ -43,6 +42,8 @@ export default function GameRoom() {
         },
         body: JSON.stringify({
           hint,
+          playerName: player?.playerName,
+          gamePin,
         }),
       });
     } catch (error) {
@@ -50,14 +51,14 @@ export default function GameRoom() {
     }
     navigate(`/voteRoom/${gamePin}`);
   };
-
+  if (!player || isLoading) return null;
   return (
     <div className="container mt-4">
       <h2>Game Room</h2>
-      <h3>Player: {player?.playerName}</h3>
+      <h3>Player: {player.playerName}</h3>
       <h3>Category: {game.categoryName}</h3>
-      <h3>Item: {player?.isImposter ? 'Imposter' : game.itemName}</h3>
-      {!player?.isImposter ? (
+      <h3>Item: {player.isImposter ? 'Imposter' : game.itemName}</h3>
+      {!player.isImposter ? (
         <form onSubmit={handleSubmitHint}>
           <div className="mb-3">
             <label htmlFor="hint" className="form-label">
@@ -76,7 +77,23 @@ export default function GameRoom() {
           </button>
         </form>
       ) : (
-        <button onClick={handleImposterButton}>Go to Vote Room</button>
+        <form onSubmit={handleSubmitHint}>
+          <div className="mb-3">
+            <label htmlFor="hint" className="form-label">
+              Enter your hint:
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="hint"
+              value={hint}
+              onChange={handleHintChange}
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Submit Hint
+          </button>
+        </form>
       )}
     </div>
   );

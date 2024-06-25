@@ -35,16 +35,15 @@ CREATE TABLE "votes" (
 );
 
 CREATE TABLE "gamePlayers" (
-  "gamePlayersId" serial PRIMARY KEY,
+  "playerName" text PRIMARY KEY,
   "gamePin" text,
-  "playerName" text unique not null,
   "isImposter" boolean default false,
   "isAlive" boolean default true
 );
 
 CREATE TABLE "hints" (
   "hintId" serial PRIMARY KEY,
-  "playerId" integer,
+  "playerName" text,
   "roundId" integer,
   "gamePin" text,
   "hint" text
