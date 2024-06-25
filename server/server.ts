@@ -70,19 +70,51 @@ app.get('/api/getItemName', async (req, res, next) => {
 });
 
 app.post('/api/submitHint', async (req, res, next) => {
-  const { hint } = req.body;
+  const { hint, playerName, gamePin } = req.body;
   try {
     const sql = `
-      INSERT INTO "hints" ("hint")
-      VALUES ($1)
+      INSERT INTO "hints" ("hint", "playerName", "gamePin")
+      VALUES ($1, $2, $3)
       RETURNING *;
     `;
-    const params = [hint];
+    const params = [hint, playerName, gamePin];
     const result = await db.query(sql, params);
     const aHint = result.rows[0];
+    res.json(aHint);
   } catch (error) {
     console.error('Cannot submit hint', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+app.post('/api/vote', async (req, res, next) => {
+  const { gamePin, voterId, votedId } = req.body;
+  try {
+    const sql = `
+      INSERT INTO "votes" ("gamePin", "voterId", "votedId")
+      VALUES ($1, $2, $3);
+    `;
+    const params = [gamePin, voterId, votedId];
+    await db.query(sql, params);
+    res.status(200).json({ message: 'Vote submitted' });
+  } catch (error) {
+    console.error('Cannot submit vote', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/api/getHints/:gamePin', async (req, res, next) => {
+  const { gamePin } = req.params;
+  try {
+    const sql = `
+    SELECT * FROM "hints"
+    WHERE "gamePin" = $1
+    `;
+    const params = [gamePin];
+    const result = await db.query(sql, params);
+    const hints = result.rows;
+    res.json(hints);
+  } catch (err) {
+    next(err);
   }
 });
 
@@ -101,10 +133,10 @@ app.get('/api/gamePlayers', async (req, res, next) => {
 
 app.post('/api/gamePlayers', async (req, res, next) => {
   try {
-    const { gamePlayersId, isImposter, isAlive } = req.body;
+    const { playerName, isImposter, isAlive } = req.body;
 
     if (
-      typeof gamePlayersId !== 'number' ||
+      typeof playerName !== 'string' ||
       typeof isImposter !== 'boolean' ||
       typeof isAlive !== 'boolean'
     ) {
@@ -112,12 +144,12 @@ app.post('/api/gamePlayers', async (req, res, next) => {
     }
 
     const sql = `
-      UPDATE gamePlayers
-      SET isImposter = $1, isAlive = $2
-      WHERE gamePlayersId = $3
+      UPDATE "gamePlayers"
+      SET "isImposter" = $1, "isAlive" = $2
+      WHERE "playerName" = $3
       RETURNING *;
     `;
-    const values = [isImposter, isAlive, gamePlayersId];
+    const values = [isImposter, isAlive, playerName];
 
     const result = await db.query(sql, values);
     const updatedGamePlayer = result.rows[0];
@@ -281,9 +313,9 @@ app.post('/api/startGame', async (req, res, next) => {
     const result2 = await db.query(sql2, [gamePin]);
     const player = result2.rows[0];
     const sql3 = `
-    update "gamePlayers" set "isImposter" = true where "gamePlayersId" = $1
+    update "gamePlayers" set "isImposter" = true where "playerName" = $1
     `;
-    await db.query(sql3, [player.gamePlayersId]);
+    await db.query(sql3, [player.playerName]);
     const sql4 = `
     Select * from "games"
     JOIN "categories" using ("categoryId")

@@ -46,6 +46,23 @@ export default function WaitingRoom() {
     }
     navigate(`/gameRoom/${gamePin}`);
   };
+  const enterGame = async () => {
+    navigate(`/gameRoom/${gamePin}`);
+  };
+
+  const fetchPlayers = async () => {
+    try {
+      const playerResponse = await fetch(`/api/players?gamePin=${gamePin}`);
+      if (playerResponse.ok) {
+        const playersData = await playerResponse.json();
+        setPlayers(playersData);
+      } else {
+        throw new Error('Error fetching players');
+      }
+    } catch (error) {
+      console.error('Error fetching players:', error);
+    }
+  };
 
   return (
     <div className="container mt-4">
@@ -59,16 +76,18 @@ export default function WaitingRoom() {
           </li>
         ))}
       </ul>
+      <button className="btn btn-secondary mt-4" onClick={fetchPlayers}>
+        Refresh Players
+      </button>
       {player?.isHost ? (
         <button className="btn btn-primary mt-4" onClick={startGame}>
           Start Game
         </button>
       ) : (
-        <button className="btn btn-primary mt-4" onClick={startGame}>
+        <button className="btn btn-primary mt-4" onClick={enterGame}>
           Enter Game
         </button>
       )}
     </div>
   );
 }
-// work on onclick start game to enter game for guest and do error handling so they can join if host joined...
