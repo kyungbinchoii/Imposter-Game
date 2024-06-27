@@ -39,15 +39,15 @@ export default function VoteRoom() {
 
   const handleVote = async () => {
     try {
-      await fetch('/api/vote', {
+      await fetch(`/api/vote/${gamePin}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           gamePin,
-          voterId: player?.playerName,
-          votedId: selectedHint,
+          voterName: player?.playerName,
+          votedName: selectedHint,
         }),
       });
     } catch (error) {
