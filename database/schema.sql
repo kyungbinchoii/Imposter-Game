@@ -30,8 +30,8 @@ CREATE TABLE "votes" (
   "voteId" serial PRIMARY KEY,
   "gamePin" text,
   "roundId" integer,
-  "voterId" integer,
-  "votedId" integer
+  "voterName" text,
+  "votedName" text
 );
 
 CREATE TABLE "gamePlayers" (

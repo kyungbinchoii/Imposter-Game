@@ -86,19 +86,57 @@ app.post('/api/submitHint', async (req, res, next) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-app.post('/api/vote', async (req, res, next) => {
-  const { gamePin, voterId, votedId } = req.body;
+app.post('/api/vote/:gamePin', async (req, res, next) => {
+  const { gamePin, voterName, votedName } = req.body;
   try {
     const sql = `
-      INSERT INTO "votes" ("gamePin", "voterId", "votedId")
+      INSERT INTO "votes" ("gamePin", "voterName", "votedName")
       VALUES ($1, $2, $3);
     `;
-    const params = [gamePin, voterId, votedId];
+    const params = [gamePin, voterName, votedName];
     await db.query(sql, params);
     res.status(200).json({ message: 'Vote submitted' });
-  } catch (error) {
-    console.error('Cannot submit vote', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/api/aliveStatus', async (req, res, next) => {
+  const { gamePin, playerName, isAlive } = req.body;
+  if (!gamePin || !playerName || isAlive === undefined) {
+    return res
+      .status(400)
+      .json({ error: 'GamePin, player name, and alive status are required' });
+  }
+  try {
+    const sql = `
+      UPDATE "gamePlayers"
+      SET "isAlive" = $1
+      WHERE "playerName" = $2
+      RETURNING *;
+    `;
+    const values = [isAlive, playerName];
+    const result = await db.query(sql, values);
+    const updatedAliveStatus = result.rows[0];
+    res.json(updatedAliveStatus);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/getVotes/:gamePin', async (req, res, next) => {
+  const { gamePin } = req.params;
+  try {
+    const sql = `
+    SELECT * FROM "votes"
+    WHERE "gamePin" = $1
+    `;
+    const params = [gamePin];
+    const result = await db.query(sql, params);
+    const hints = result.rows;
+    res.json(hints);
+  } catch (err) {
+    next(err);
   }
 });
 
@@ -126,35 +164,6 @@ app.get('/api/gamePlayers', async (req, res, next) => {
     const result = await db.query(sql);
     const gamePlayers = result.rows;
     res.json(gamePlayers);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.post('/api/gamePlayers', async (req, res, next) => {
-  try {
-    const { playerName, isImposter, isAlive } = req.body;
-
-    if (
-      typeof playerName !== 'string' ||
-      typeof isImposter !== 'boolean' ||
-      typeof isAlive !== 'boolean'
-    ) {
-      return res.status(400).json({ error: 'Invalid input data' });
-    }
-
-    const sql = `
-      UPDATE "gamePlayers"
-      SET "isImposter" = $1, "isAlive" = $2
-      WHERE "playerName" = $3
-      RETURNING *;
-    `;
-    const values = [isImposter, isAlive, playerName];
-
-    const result = await db.query(sql, values);
-    const updatedGamePlayer = result.rows[0];
-
-    res.json(updatedGamePlayer);
   } catch (err) {
     next(err);
   }
