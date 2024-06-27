@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePlayer } from './usePlayer';
+import '../WaitingRoom.css';
 
 export default function GameRoom() {
   const { gamePin } = useParams();
@@ -53,48 +54,60 @@ export default function GameRoom() {
   };
   if (!player || isLoading) return null;
   return (
-    <div className="container mt-4">
-      <h2>Game Room</h2>
-      <h3>Player: {player.playerName}</h3>
-      <h3>Category: {game.categoryName}</h3>
-      <h3>Item: {player.isImposter ? 'Imposter' : game.itemName}</h3>
-      {!player.isImposter ? (
-        <form onSubmit={handleSubmitHint}>
-          <div className="mb-3">
-            <label htmlFor="hint" className="form-label">
-              Enter your hint:
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="hint"
-              value={hint}
-              onChange={handleHintChange}
-            />
-          </div>
-          <button type="submit" className="btn btn-primary">
-            Submit Hint
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={handleSubmitHint}>
-          <div className="mb-3">
-            <label htmlFor="hint" className="form-label">
-              Enter your hint:
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="hint"
-              value={hint}
-              onChange={handleHintChange}
-            />
-          </div>
-          <button type="submit" className="btn btn-primary">
-            Submit Hint
-          </button>
-        </form>
-      )}
-    </div>
+    <>
+      <div
+        style={{
+          backgroundImage: 'url(/Images/welcome.jpeg)',
+          backgroundSize: 'cover',
+          width: '100vw',
+          height: '300px',
+        }}></div>
+      <div className="container mt-4">
+        <div className="lobby-container">
+          <h2>Game Room</h2>
+          <h3>Player: {player.playerName}</h3>
+          <h3>Category: {game.categoryName}</h3>
+          <h3>Item: {player.isImposter ? 'Imposter' : game.itemName}</h3>
+        </div>
+        {!player.isImposter ? (
+          <form onSubmit={handleSubmitHint}>
+            <div className="mb-3  ">
+              <label htmlFor="hint" className="form-label lobby-container ">
+                ENTER YOUR HINT!
+              </label>
+              <input
+                type="text"
+                className="form-control "
+                id="hint"
+                value={hint}
+                onChange={handleHintChange}
+              />
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Submit Hint
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleSubmitHint}>
+            <div className="mb-3">
+              <label htmlFor="hint" className="form-label imposter">
+                Try to fit in imposter! Type a hint to fit in with the
+                crewmates!:
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="hint"
+                value={hint}
+                onChange={handleHintChange}
+              />
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Submit Hint
+            </button>
+          </form>
+        )}
+      </div>
+    </>
   );
 }

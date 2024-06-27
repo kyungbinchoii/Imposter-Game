@@ -78,34 +78,48 @@ export default function VoteOutcomeRoom() {
   const goHome = () => {
     navigate('/');
   };
+
   return (
-    <div className="container mt-4">
-      <h1 className="mb-4">Vote Outcome</h1>
-      <ul>
-        {Object.entries(voteCounts).map(([playerName, count]) => (
-          <li key={playerName} className="list-group-item">
-            {playerName}: {count} vote{count !== 1 ? 's' : ''}
-          </li>
-        ))}
-        <button className="btn btn-secondary mt-4" onClick={fetchVotes}>
-          Refresh Votes
-        </button>
-      </ul>
-      {isGameOver && (
-        <div className="mt-4">
-          <h2>Game Over</h2>
-          <div>Most Voted Player: {mostVotedPlayer}</div>
-          <div>Imposter: {imposter?.playerName}</div>
-          {mostVotedPlayerIsImposter ? (
-            <div>The CREWMATES win!</div>
-          ) : (
-            <div>The IMPOSTER wins!</div>
-          )}
-          <button className="btn btn-secondary mt-4" onClick={goHome}>
-            Go Home
+    <>
+      <div
+        style={{
+          backgroundImage: 'url(/Images/welcome.jpeg)',
+          backgroundSize: 'cover',
+          width: '100vw',
+          height: '300px',
+        }}></div>
+      <div className="container mt-4 lobby-container">
+        <h1 className="mb-4 lobby-container">Vote Outcome</h1>
+        <ul>
+          {Object.entries(voteCounts).map(([playerName, count]) => (
+            <li key={playerName} className="list-group-item lobby-container">
+              {playerName}: {count} vote{count !== 1 ? 's' : ''}
+            </li>
+          ))}
+          <button className="btn btn-secondary mt-4 " onClick={fetchVotes}>
+            Refresh Votes
           </button>
-        </div>
-      )}
-    </div>
+        </ul>
+        {isGameOver && (
+          <div className="mt-4 lobby-container">
+            <h2>Game Over</h2>
+            <div>Most Voted Player: {mostVotedPlayer}</div>
+            <div>Imposter: {imposter?.playerName}</div>
+            {mostVotedPlayerIsImposter ? (
+              <div>The CREWMATES win!</div>
+            ) : (
+              <div>The IMPOSTER wins!</div>
+            )}
+          </div>
+        )}
+        {isGameOver && (
+          <div className="mt-4">
+            <button className="btn btn-secondary" onClick={goHome}>
+              Go Home
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

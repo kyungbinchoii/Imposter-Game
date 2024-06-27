@@ -3,12 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { usePlayer } from './usePlayer';
 import { useEffect, useState } from 'react';
 import { Player } from './playerContext';
+import '../WaitingRoom.css';
 
 export default function WaitingRoom() {
   const navigate = useNavigate();
   const { game, player, setGame } = usePlayer();
   const [players, setPlayers] = useState<Player[]>([]);
   const { gamePin } = useParams();
+
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
@@ -46,6 +48,7 @@ export default function WaitingRoom() {
     }
     navigate(`/gameRoom/${gamePin}`);
   };
+
   const enterGame = async () => {
     navigate(`/gameRoom/${gamePin}`);
   };
@@ -64,30 +67,59 @@ export default function WaitingRoom() {
     }
   };
 
+  const numRows = Math.ceil(players.length / 2);
+
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Lobby</h2>
-      <h3>Game Pin: {game.gamePin}</h3>
-      <h3>Category: {game.categoryName}</h3>
-      <ul className="list-group">
-        {players.map((player, index) => (
-          <li key={index} className="list-group-item">
-            {player.playerName}
-          </li>
-        ))}
-      </ul>
-      <button className="btn btn-secondary mt-4" onClick={fetchPlayers}>
-        Refresh Players
-      </button>
-      {player?.isHost ? (
-        <button className="btn btn-primary mt-4" onClick={startGame}>
-          Start Game
+    <>
+      <div
+        style={{
+          backgroundImage: 'url(/Images/welcome.jpeg)',
+          backgroundSize: 'cover',
+          width: '100vw',
+          height: '300px',
+        }}></div>
+      <div className="container mt-4">
+        <div className="lobby-container">
+          <h1>LOBBY</h1>
+          <h2>GAME PIN: {game.gamePin}</h2>
+          <h2>CATEGORY: {game.categoryName}</h2>
+          <h5>Press refresh players until all players join the lobby!</h5>
+        </div>
+        <p></p>
+        <div className="players-grid">
+          {[...Array(numRows)].map((_, rowIndex) => (
+            <div key={rowIndex} className="row">
+              {[0, 1].map((colIndex) => {
+                const playerIndex = rowIndex * 2 + colIndex;
+                if (playerIndex < players.length) {
+                  const currentPlayer = players[playerIndex];
+                  return (
+                    <div
+                      key={currentPlayer.playerName}
+                      className="col bold-text">
+                      {currentPlayer.playerName}
+                    </div>
+                  );
+                } else {
+                  return null;
+                }
+              })}
+            </div>
+          ))}
+        </div>
+        <button className="btn btn-secondary mt-4" onClick={fetchPlayers}>
+          Refresh Players
         </button>
-      ) : (
-        <button className="btn btn-primary mt-4" onClick={enterGame}>
-          Enter Game
-        </button>
-      )}
-    </div>
+        {player?.isHost ? (
+          <button className="btn btn-primary mt-4" onClick={startGame}>
+            Start Game
+          </button>
+        ) : (
+          <button className="btn btn-primary mt-4" onClick={enterGame}>
+            Enter Game
+          </button>
+        )}
+      </div>
+    </>
   );
 }

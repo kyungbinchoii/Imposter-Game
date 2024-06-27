@@ -62,14 +62,21 @@ export default function VoteRoom() {
 
   return (
     <>
-      <div className="container mt-4">
-        <h2>THE IMPOSTER GAME VOTING ROOM</h2>
+      <div
+        style={{
+          backgroundImage: 'url(/Images/welcome.jpeg)',
+          backgroundSize: 'cover',
+          width: '100vw',
+          height: '300px',
+        }}></div>
+      <div className="container mt-4 lobby-container">
+        <h2 className="lobby-container">THE IMPOSTER GAME VOTING ROOM</h2>
         <button onClick={handleRefresh} className="btn btn-secondary mb-3">
           Refresh Hints
         </button>
-        <ul className="list-group">
+        <ul className="list-group ">
           {hints.map((hint, index) => (
-            <li key={index} className="list-group-item">
+            <li key={index} className="list-group-item lobby-container">
               <input
                 type="radio"
                 name="hintSelection"

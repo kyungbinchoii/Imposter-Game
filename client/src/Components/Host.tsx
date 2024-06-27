@@ -67,6 +67,9 @@ export default function Host() {
           itemId: randomItem.itemId,
         }),
       });
+      if (!insertGameInfo.ok) {
+        throw new Error('Error creating game!');
+      }
 
       const gameInfo = await insertGameInfo.json();
       console.log('Insert game info:', gameInfo);
@@ -82,6 +85,7 @@ export default function Host() {
       setPlayer(host);
       navigate(`/lobby/${gameInfo.gamePin}`);
     } catch (error) {
+      alert('Error creating game! Try new game pin');
       console.error('Error fetching random item:', error);
     }
   };

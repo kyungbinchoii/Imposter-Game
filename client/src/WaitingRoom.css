@@ -1,0 +1,40 @@
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.players-grid .row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.players-grid .col {
+  border: 3px solid black;
+  padding: 10px;
+  background-color: cyan;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+.lobby-container {
+  background-color: black;
+  padding: 20px;
+  border-radius: 10px;
+  color: cyan;
+  width: 100%;
+  max-width: 10000px;
+  margin: 0 auto;
+}
+
+.imposter {
+  background-color: red;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  width: 100%;
+  max-width: 10000px;
+  margin: 0 auto;
+}
