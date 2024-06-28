@@ -2,17 +2,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Host from './Host';
 import Guest from './Guest';
 import '../WaitingRoom.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
     <div>
       <header className="d-flex justify-content-between align-items-center p-3 bg-body-tertiary w-100">
         <h1 className="m-0">The Imposter Game</h1>
-        <div>
-          <button className="btn btn-primary me-2 ">Sign In</button>
-          <button className="btn btn-secondary me-2">Log In</button>
-          <button className="btn btn-success">Sign Up</button>
-        </div>
+
+        <button className="btn btn-primary me-2" onClick={() => navigate('/')}>
+          Home
+        </button>
       </header>
       <div
         style={{
@@ -34,7 +36,7 @@ export default function Home() {
               category, invite Guests with the Game Pin and vote off the
               imposter in the group!
             </h5>
-            <h3 className="lobby-container">Game Rules</h3>
+            <h3 className="lobby-container">GAME RULES!</h3>
             <div className="lobby-container">
               <ol>
                 <li>IF YOU ARE HOST CHOOSE A CATEGORY!</li>
@@ -48,6 +50,10 @@ export default function Home() {
                 <li>VOTE WHO YOU THINK IS THE IMPOSTER BASED OFF THE HINTS!</li>
                 <li>IMPOSTERS TRY TO BLEND IN AS BEST AS POSSIBLE!</li>
               </ol>
+              <p>
+                TLDR: For example: 3 of us knows the word. One doesn't. Guess
+                the imposter by giving clues on what the word is
+              </p>
             </div>
           </div>
           <div className="col-md-4 text-center">

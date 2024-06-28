@@ -29,6 +29,10 @@ export default function WaitingRoom() {
   }, [gamePin]);
 
   const startGame = async () => {
+    if (players.length < 3) {
+      alert('At least 3 players are required to start the game.');
+      return;
+    }
     try {
       const gameResponse = await fetch(`/api/startGame`, {
         method: 'POST',
@@ -50,6 +54,10 @@ export default function WaitingRoom() {
   };
 
   const enterGame = async () => {
+    if (players.length < 3) {
+      alert('At least 3 players are required to enter the game.');
+      return;
+    }
     navigate(`/gameRoom/${gamePin}`);
   };
 
@@ -71,6 +79,17 @@ export default function WaitingRoom() {
 
   return (
     <>
+      <div>
+        <header className="d-flex justify-content-between align-items-center p-3 bg-body-tertiary w-100">
+          <h1 className="m-0">The Imposter Game</h1>
+
+          <button
+            className="btn btn-primary me-2"
+            onClick={() => navigate('/')}>
+            Home
+          </button>
+        </header>
+      </div>
       <div
         style={{
           backgroundImage: 'url(/Images/welcome.jpeg)',

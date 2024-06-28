@@ -62,6 +62,17 @@ export default function VoteRoom() {
 
   return (
     <>
+      <div>
+        <header className="d-flex justify-content-between align-items-center p-3 bg-body-tertiary w-100">
+          <h1 className="m-0">The Imposter Game</h1>
+
+          <button
+            className="btn btn-primary me-2"
+            onClick={() => navigate('/')}>
+            Home
+          </button>
+        </header>
+      </div>
       <div
         style={{
           backgroundImage: 'url(/Images/welcome.jpeg)',
@@ -74,7 +85,7 @@ export default function VoteRoom() {
         <button onClick={handleRefresh} className="btn btn-secondary mb-3">
           Refresh Hints
         </button>
-        <ul className="list-group ">
+        <ul className="list-group">
           {hints.map((hint, index) => (
             <li key={index} className="list-group-item lobby-container">
               <input
@@ -87,7 +98,12 @@ export default function VoteRoom() {
             </li>
           ))}
         </ul>
-        <button onClick={handleVote}>Vote Player</button>
+        <button
+          onClick={handleVote}
+          className="btn btn-primary"
+          disabled={!selectedHint}>
+          Vote Player
+        </button>
       </div>
     </>
   );
