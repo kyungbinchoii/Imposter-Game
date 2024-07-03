@@ -83,16 +83,18 @@ export default function GameRoom() {
           <h3>Player: {player.playerName}</h3>
           <h3>Category: {game.categoryName}</h3>
           <h3>Item: {player.isImposter ? 'Imposter' : game.itemName}</h3>
+          <label htmlFor="hint" className="form-label lobby-container ">
+            ENTER YOUR HINT!
+          </label>
         </div>
         {!player.isImposter ? (
           <form onSubmit={handleSubmitHint}>
             <div className="mb-3  ">
-              <label htmlFor="hint" className="form-label lobby-container ">
-                ENTER YOUR HINT!
-              </label>
+              <p></p>
+
               <input
                 type="text"
-                className="form-control "
+                className="form-control small-input"
                 id="hint"
                 value={hint}
                 onChange={handleHintChange}
@@ -109,9 +111,10 @@ export default function GameRoom() {
                 Try to fit in imposter! Type a hint to fit in with the
                 crewmates!:
               </label>
+              <p></p>
               <input
                 type="text"
-                className="form-control"
+                className="form-control small-input"
                 id="hint"
                 value={hint}
                 onChange={handleHintChange}

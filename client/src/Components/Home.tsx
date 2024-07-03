@@ -3,6 +3,7 @@ import Host from './Host';
 import Guest from './Guest';
 import '../WaitingRoom.css';
 import { useNavigate } from 'react-router-dom';
+import DemoRoom from './DemoButton';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function Home() {
             <div className="lobby-container">
               <ol>
                 <li>IF YOU ARE HOST CHOOSE A CATEGORY!</li>
+                <li>MUST HAVE 3 OR MORE PLAYERS TO PLAY!</li>
                 <li>
                   GUESTS: ENTER GAME PIN THE HOST SENT YOU AND ENTER A USERNAME
                   AND THE GAME PIN TO START!
@@ -52,8 +54,10 @@ export default function Home() {
               </ol>
               <p>
                 TLDR: For example: 3 of us knows the word. One doesn't. Guess
-                the imposter by giving clues on what the word is
+                the imposter by giving clues on what the word is.
               </p>
+              <p>click below for visual learners/recruiters/hiring managers</p>
+              <DemoRoom></DemoRoom>
             </div>
           </div>
           <div className="col-md-4 text-center">

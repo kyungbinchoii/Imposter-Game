@@ -6,6 +6,7 @@ import { PlayerProvider } from './Components/playerContext.tsx';
 import GameRoom from './Components/GameRoom.tsx';
 import VoteRoom from './Components/voteRoom.tsx';
 import VoteOutcomeRoom from './Components/VoteOutcomeRoom.tsx';
+import DemoRoom from './Components/DemoRoom.tsx';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
             path="/voteOutcomeRoom/:gamePin"
             element={<VoteOutcomeRoom />}
           />
+          <Route path="/demo" element={<DemoRoom />} />
         </Routes>
       </BrowserRouter>
     </PlayerProvider>
